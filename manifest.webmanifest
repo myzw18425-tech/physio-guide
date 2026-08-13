@@ -1,11 +1,11 @@
 {
   "name": "Physio Guide",
   "short_name": "Physio Guide",
-  "description": "دليل تعليمي للتأهيل والعلاج الطبيعي",
+  "description": "دليل تعليمي للتأهيل والعلاج الطبيعي - الإصدار 3",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#087FA8",
+  "background_color": "#f3f8fb",
+  "theme_color": "#087fa8",
   "lang": "ar",
   "dir": "rtl"
 }
