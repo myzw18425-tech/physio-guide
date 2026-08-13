@@ -10,8 +10,7 @@ main{max-width:960px;margin:auto;padding:18px}.grid{display:grid;grid-template-c
 nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2edf0;display:flex;justify-content:space-around;padding:8px;z-index:10;overflow:auto}
 nav button{border:0;background:none;color:#536b77;font-size:10px;min-width:58px}nav b{display:block;font-size:19px}.spacer{height:72px}
 @media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
-</style><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#087FA8">
-</head><body><div id="app"></div>
+</style></head><body><div id="app"></div>
 <nav><button onclick="home()"><b>🏠</b>الرئيسية</button><button onclick="list('conditions')"><b>🩺</b>الحالات</button><button onclick="list('injuries')"><b>🦴</b>الإصابات</button><button onclick="list('devices')"><b>⚡</b>الأجهزة</button><button onclick="list('exercises')"><b>🏋️</b>التمارين</button><button onclick="list('tests')"><b>📋</b>التقييم</button><button onclick="refs()"><b>📚</b>المراجع</button></nav>
 <script>
 const DB={
@@ -57,14 +56,40 @@ else b=`<h3>ما الذي يقيسه؟</h3><p>${x[2]}</p><h3>دوره</h3><p>ي�
 layout(`<button class=back onclick="list('${k}')">← رجوع</button><div class=detail><button class=fav onclick="toggle('${key}')">${fav?"⭐":"☆"}</button><h2>${x[0]}</h2><div class=muted>${x[1]||""}</div>${b}<div class=source><b>📚 مرجع:</b> راجع قسم المراجع داخل التطبيق للحصول على المصادر الرسمية.</div><div class=warning><b>⚠️ تنبيه:</b> هذا التطبيق تعليمي للطلاب وليس أداة لتشخيص المرضى أو وصف علاج فردي.</div></div>`)}
 function exerciseBtn(id){let i=DB.exercises.findIndex(e=>e[3]===id);return i>=0?`<button class=item onclick="detail('exercises',${i})">${DB.exercises[i][0]} — ${DB.exercises[i][1]}</button>`:""}
 function toggle(k){let a=F();a=a.includes(k)?a.filter(x=>x!==k):[...a,k];SF(a);let[c,i]=k.split("|");detail(c,+i)}
-function favs(){let a=F(),r=[];a.forEach(k=>{let[c,i]=k.split("|"),x=(c==="tests"?TESTS:DB[c])?.[i];if(x)r.push({c,i,x})});layout(`<button class=back onclick=home()>← الرئيسية</button><h2>⭐ المفضلة</h2>${r.length?`<div class=list>${r.map(z=>`<button class=item onclick="detail('${z.c}',${z.i})"><strong>${z.x[0]}</strong><div class=muted>${z.x[1]||""}</div></button>`).join("")}</div>`:`<p class=muted>لا توجد عناصر محفوظة.</p>`)}
+function favs(){
+  let a=F(),r=[];
+  a.forEach(k=>{
+    let parts=k.split("|"),c=parts[0],i=+parts[1];
+    let x=(c==="tests"?TESTS:DB[c])?.[i];
+    if(x)r.push({c,i,x});
+  });
+  let html='<button class="back" onclick="home()">← الرئيسية</button><h2>⭐ المفضلة</h2>';
+  if(r.length){
+    html+='<div class="list">';
+    r.forEach(z=>{html+='<button class="item" onclick="detail(\''+z.c+'\','+z.i+')"><strong>'+z.x[0]+'</strong><div class="muted">'+(z.x[1]||'')+'</div></button>';});
+    html+='</div>';
+  }else{html+='<p class="muted">لا توجد عناصر محفوظة.</p>';}
+  layout(html);
+}
 function refs(){layout(`<button class=back onclick=home()>← الرئيسية</button><h2>📚 المراجع العلمية</h2><div class=list>
 <div class=detail><h3>منظمة الصحة العالمية WHO — Package of Interventions for Rehabilitation</h3><p>مرجع أساسي لبنية الحالات والتدخلات والموارد في التأهيل.</p><a href="https://www.who.int/publications/i/item/9789240067097" target="_blank">فتح المرجع الرسمي ↗</a></div>
 <div class=detail><h3>WHO — Musculoskeletal Module</h3><p>يشمل: ألم أسفل الظهر، الفصال العظمي، التهاب المفاصل الروماتويدي، الساركوبينيا، الكسور والبتر.</p><a href="https://www.who.int/publications/i/item/9789240071100" target="_blank">فتح المرجع ↗</a></div>
 <div class=detail><h3>WHO — Neurological Web Annex</h3><p>يتضمن مراجعات الأدلة والجداول المتعلقة بالسكتة وباركنسون وإصابة الدماغ والحبل الشوكي والشلل الدماغي والخرف.</p><a href="https://www.who.int/publications/i/item/9789240071155" target="_blank">فتح المرجع ↗</a></div>
 <div class=detail><h3>World Physiotherapy — Evidence-Based Practice</h3><p>مرجع لمبدأ الممارسة المبنية على أفضل الأدلة المتاحة.</p><a href="https://world.physio/policy/ps-ebp" target="_blank">فتح المرجع ↗</a></div>
 </div>`)}
-function search(q){q=q.trim().toLowerCase();if(!q)return;let r=[];Object.keys(DB).forEach(k=>DB[k].forEach((x,i)=>{if(x.join(" ").toLowerCase().includes(q))r.push({k,i,x})}));TESTS.forEach((x,i)=>{if(x.join(" ").toLowerCase().includes(q))r.push({k:"tests",i,x})});document.querySelector("main").innerHTML=`<h2>🔎 نتائج البحث</h2>${r.length?`<div class=list>${r.map(a=>`<button class=item onclick="detail('${a.k}',${a.i})"><strong>${a.x[0]}</strong><div class=muted>${TIT[a.k]} · ${a.x[1]||""}</div></button>`).join("")}</div>`:`<p class=muted>لا توجد نتائج.</p>`}
+function search(q){
+  q=q.trim().toLowerCase();
+  if(!q){home();return;}
+  let r=[];
+  Object.keys(DB).forEach(k=>DB[k].forEach((x,i)=>{if(x.join(" ").toLowerCase().includes(q))r.push({k,i,x});}));
+  TESTS.forEach((x,i)=>{if(x.join(" ").toLowerCase().includes(q))r.push({k:"tests",i,x});});
+  let html='<h2>🔎 نتائج البحث</h2>';
+  if(r.length){
+    html+='<div class="list">';
+    r.forEach(a=>{html+='<button class="item" onclick="detail(\''+a.k+'\','+a.i+')"><strong>'+a.x[0]+'</strong><div class="muted">'+(TIT[a.k]||'')+' · '+(a.x[1]||'')+'</div></button>';});
+    html+='</div>';
+  }else html+='<p class="muted">لا توجد نتائج.</p>';
+  document.querySelector("main").innerHTML=html;
+}
 home();
-</script><script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js");</script>
-</body></html>
+</script></body></html>
