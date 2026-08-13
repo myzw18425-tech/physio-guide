@@ -1,0 +1,11 @@
+{
+  "name": "Physio Guide",
+  "short_name": "Physio Guide",
+  "description": "دليل تعليمي للتأهيل والعلاج الطبيعي",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#087FA8",
+  "lang": "ar",
+  "dir": "rtl"
+}
